@@ -4,6 +4,8 @@ import "sync"
 
 // Abortable is a convenience type for aborting groups of goroutines
 // at once. context.Context would probably be a better solution.
+// Abort() can be called multiple times and Wait() can be called
+// after Abort() to return the closed channel.
 type Abortable struct {
 	m  sync.Mutex
 	ok bool
@@ -13,6 +15,7 @@ type Abortable struct {
 func (a *Abortable) ready() {
 	if !a.ok {
 		a.c = make(chan struct{})
+		a.ok = true
 	}
 }
 
